@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div id="logo" th:fragment="logo">
+    <a href="/">
+        <img src="/logo.jpg">
+    </a>
+</div>
+
+<div id="menu" th:fragment="menu">
+    <a href="/" class="button">Home</a>
+    <a href="/auctions" class="button">All Auctions</a>
+    <a href="/auctions/my-auctions" th:if="${session.user != null}" class="button">My Auctions</a>
+    <a href="/auctions/my-bids" th:if="${session.user != null}" class="button">My Bids</a>
+    <a href="/auctions/my-purchases" th:if="${session.user != null}" class="button">My Purchases</a>
+    <a href="/auctions/create" th:if="${session.user != null}" class="button">Create Auction</a>
+    <a href="/auctions/archive" class="button">Archive</a>
+    <a href="/login" th:if="${session.user == null}" class="button">Login</a>
+    <a href="/register" th:if="${session.user == null}" class="button">Register</a>
+    <a href="/logout" th:if="${session.user != null}" class="button">Logout</a>
+</div>
+
+</body>
+</html>

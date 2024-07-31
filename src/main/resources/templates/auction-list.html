@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Auctions - Auction System</title>
+    <link rel="stylesheet" href="/common.css">
+    <link rel="stylesheet" href="/auction-list.css">
+    <style>
+        .auction-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .auction-item {
+            width: calc(50% - 10px);
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        @media (max-width: 768px) {
+            .auction-item {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments.html :: logo"></div>
+<div th:replace="fragments.html :: menu"></div>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="sort-options">
+            <select onchange="location = this.value;">
+                <option value="">Sort by...</option>
+                <option th:value="@{/auctions(category=${currentCategory}, sort='price_asc')}" th:selected="${currentSort == 'price_asc'}">Price: Low to High</option>
+                <option th:value="@{/auctions(category=${currentCategory}, sort='price_desc')}" th:selected="${currentSort == 'price_desc'}">Price: High to Low</option>
+                <option th:value="@{/auctions(category=${currentCategory}, sort='time_asc')}" th:selected="${currentSort == 'time_asc'}">Time: Ending Soon</option>
+                <option th:value="@{/auctions(category=${currentCategory}, sort='time_desc')}" th:selected="${currentSort == 'time_desc'}">Time: Newly Listed</option>
+                <option th:value="@{/auctions(category=${currentCategory}, sort='popularity')}" th:selected="${currentSort == 'popularity'}">Popularity</option>
+            </select>
+        </div>
+        <h3>Categories</h3>
+        <ul>
+            <li th:each="category : ${categories}">
+                <a th:href="@{${currentUrl}(category=${category})}" th:text="${category}">Category</a>
+            </li>
+        </ul>
+        <h3>Search</h3>
+        <form th:action="${currentUrl}" method="get">
+            <input type="text" name="search" placeholder="Search auctions...">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <div class="content">
+        <h2>Active Auctions</h2>
+        <div th:if="${auctions.empty}" class="no-auctions">
+            <p>No auctions found.</p>
+        </div>
+        <div th:if="${not auctions.empty}" class="auction-list">
+            <div th:each="auction : ${auctions}" class="auction-item">
+                <h3 th:text="${auction.title}">Auction Title</h3>
+                <p th:text="${auction.description}">Auction Description</p>
+                <p th:if="${auction.bids.isEmpty()}">
+                    Starting Price: $<span th:text="${#numbers.formatDecimal(auction.startingPrice, 1, 2)}">100.00</span>
+                </p>
+                <p th:unless="${auction.bids.isEmpty()}">
+                    Current Bid: $<span th:text="${#numbers.formatDecimal(auction.getCurrentBid(), 1, 2)}">150.00</span>
+                </p>
+                <p>End Time: <span th:text="${#temporals.format(auction.endTime, 'yyyy-MM-dd HH:mm')}">2023-05-01 12:00</span></p>
+                <p>Time Remaining: <span class="countdown" th:data-end-time="${auction.endTime}"></span></p>
+                <p>Category: <span th:text="${auction.category}">Category</span></p>
+                <p>Number of Bids: <span th:text="${auction.bids.size()}">5</span></p>
+                <a th:href="@{/auctions/{id}(id=${auction.id})}" class="button">View Details</a>
+                <div th:if="${isAdmin}" class="admin-buttons">
+                    <a th:href="@{/auctions/admin/edit/{id}(id=${auction.id})}" class="button">Edit</a>
+                    <form th:action="@{/auctions/admin/remove/{id}(id=${auction.id})}" method="post" style="display: inline;">
+                        <button type="submit" class="button" onclick="return confirm('Are you sure you want to remove this auction?')">Remove</button>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    function updateCountdown() {
+        const countdowns = document.querySelectorAll('.countdown');
+        const now = new Date().getTime();
+
+        countdowns.forEach(countdown => {
+            const endTime = new Date(countdown.getAttribute('data-end-time')).getTime();
+            const timeLeft = endTime - now;
+
+            if (timeLeft < 0) {
+                countdown.textContent = "Auction ended";
+            } else {
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                countdown.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }
+        });
+    }
+
+    // Update countdown every second
+    setInterval(updateCountdown, 1000);
+
+    // Initial update
+    updateCountdown();
+</script>
+
+</body>
+</html>

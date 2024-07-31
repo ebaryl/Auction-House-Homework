@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Auction System</title>
+    <link rel="stylesheet" href="/common.css">
+    <link rel="stylesheet" href="/login.css">
+    <link rel="stylesheet" href="/register.css">
+    <script>
+        function checkLength(id, mess) {
+            var inputField = document.getElementById(id);
+            var message = document.getElementById("message");
+            if (inputField.value.length < 5 && inputField.value.length != 0) {
+                message.textContent = mess;
+            } else {
+                message.textContent = "";
+            }
+        }
+    </script>
+</head>
+<body>
+<div th:replace="fragments.html :: logo"></div>
+<div th:replace="fragments.html :: menu"></div>
+
+<div id="content">
+    <h2>Register</h2>
+    <form id="register-form" action="/register" method="post">
+        <p th:if="${registererrors != null}" th:text="${registererrors}"></p>
+        <p id="message" style=" font-size:20px; color: red;"></p>
+        <input type="text" name="name" placeholder="Name" required class="text-field">
+        <input type="text" name="surname" placeholder="Surname" required class="text-field">
+        <input id="textInput1" type="text" name="login" placeholder="Login" required class="text-field" onkeyup="checkLength('textInput1', 'Login must be at least 4 characters.')">
+        <input id="textInput2" type="password" name="password" placeholder="Password" required class="text-field" onkeyup="checkLength('textInput2', 'Password must be at least 4 characters.')">
+        <input type="submit" value="Register" class="button">
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${auction.title} + ' - Auction System'">Auction Details</title>
+    <link rel="stylesheet" href="/common.css">
+    <link rel="stylesheet" href="/auction-details.css">
+</head>
+<body>
+<div th:replace="fragments.html :: logo"></div>
+<div th:replace="fragments.html :: menu"></div>
+
+<div id="content">
+    <h2 th:text="${auction.title}">Auction Title</h2>
+    <p th:text="${auction.description}">Auction Description</p>
+    <p>Starting Price: $<span th:text="${#numbers.formatDecimal(auction.startingPrice, 1, 2)}">100.00</span></p>
+    <p>End Time: <span th:text="${#temporals.format(auction.endTime, 'yyyy-MM-dd HH:mm')}">2023-05-01 12:00</span></p>
+    <p>Time Remaining: <span class="countdown" th:data-end-time="${auction.endTime}"></span></p>
+
+    <div th:if="${not #lists.isEmpty(bids)}">
+        <h3>Current Bids</h3>
+        <ul>
+            <li th:each="bid : ${bids}">
+                $<span th:text="${#numbers.formatDecimal(bid.amount, 1, 2)}">150.00</span>
+                by <span th:text="${bid.bidder.name}">John Doe</span>
+                at <span th:text="${#temporals.format(bid.bidTime, 'yyyy-MM-dd HH:mm')}">2023-04-24 14:30</span>
+            </li>
+        </ul>
+    </div>
+    <div th:if="${#lists.isEmpty(bids)}">
+        <h3 style="color: mediumseagreen">Nobody is currently bidding</h3>
+    </div>
+
+    <div class="buy-panel" th:if="${session.user != null}">
+        <h3>Place a Bid</h3>
+        <form th:action="@{/auctions/{id}/bid(id=${auction.id})}" method="post">
+            <div class="bid-container">
+                <input type="number" name="amount" step="0.01" required class="bid-input"
+                       th:value="${#numbers.formatDecimal(suggestedBid, 1, 2)}">
+                <button type="submit" class="bid-button">Place Bid</button>
+            </div>
+        </form>
+
+        <form th:if="${auction.status == T(auction.model.Auction.AuctionStatus).ACTIVE}"
+              th:action="@{/auctions/{id}/buy(id=${auction.id})}" method="post">
+            <button type="submit" class="buy-now-button">Buy Now for $<span th:text="${#numbers.formatDecimal(auction.buyNowPrice, 1, 2)}">500.00</span></button>
+        </form>
+    </div>
+
+    <div th:if="${session.user == null}">
+        <a href="/login" class="login-to-bid-button">Log in to place bid</a>
+    </div>
+
+    <p th:if="${error}" th:text="${error}" class="error-message"></p>
+</div>
+
+<script th:inline="javascript">
+    function updateCountdown() {
+        const countdowns = document.querySelectorAll('.countdown');
+        const now = new Date().getTime();
+
+        countdowns.forEach(countdown => {
+            const endTime = new Date(countdown.getAttribute('data-end-time')).getTime();
+            const timeLeft = endTime - now;
+
+            if (timeLeft < 0) {
+                countdown.textContent = "Auction ended";
+            } else {
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                countdown.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }
+        });
+    }
+    setInterval(updateCountdown, 1000);
+
+    updateCountdown();
+</script>
+</body>
+</html>

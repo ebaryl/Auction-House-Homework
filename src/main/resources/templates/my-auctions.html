@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Auctions - Auction System</title>
+    <link rel="stylesheet" href="/common.css">
+    <link rel="stylesheet" href="/auction-list.css">
+</head>
+<body>
+<div th:replace="fragments.html :: logo"></div>
+<div th:replace="fragments.html :: menu"></div>
+
+<div class="container">
+    <h2>My Auctions</h2>
+    <div th:if="${auctions.isEmpty()}" class="no-auctions">
+        <p>You haven't created any auctions yet.</p>
+    </div>
+    <div th:if="${not auctions.isEmpty()}" class="auction-list">
+        <div th:each="auction : ${auctions}" class="auction-item">
+            <h3 th:text="${auction.title}">Auction Title</h3>
+            <p th:text="${auction.description}">Auction Description</p>
+            <p>Starting Price: $<span th:text="${#numbers.formatDecimal(auction.startingPrice, 1, 2)}">100.00</span></p>
+            <p>Buy Now Price: $<span th:text="${#numbers.formatDecimal(auction.buyNowPrice, 1, 2)}">150.00</span></p>
+            <p>End Time: <span th:text="${#temporals.format(auction.endTime, 'yyyy-MM-dd HH:mm')}">2023-05-01 12:00</span></p>
+            <p>Status: <span th:text="${auction.status}">ACTIVE</span></p>
+            <p>Category: <span th:text="${auction.category}">Category</span></p>
+            <a th:href="@{/auctions/edit/{id}(id=${auction.id})}" class="button">Edit</a>
+            <form th:if="${auction.bids.isEmpty()}" th:action="@{/auctions/remove/{id}(id=${auction.id})}" method="post" style="display: inline;">
+                <button type="submit" class="button" onclick="return confirm('Are you sure you want to remove this auction?')">Remove</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

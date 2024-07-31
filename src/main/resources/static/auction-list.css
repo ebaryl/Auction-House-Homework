@@ -1,0 +1,105 @@
+.container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.sidebar {
+    width: 200px;
+    padding-right: 20px;
+}
+
+.content {
+    flex: 1;
+}
+
+.sidebar h3 {
+    margin-top: 0;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.sidebar a:hover {
+    text-decoration: underline;
+}
+
+.sidebar form {
+    margin-top: 20px;
+}
+
+.sidebar input[type="text"] {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.sidebar button:hover {
+    background-color: #0056b3;
+}
+
+.auction-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.auction-item {
+    flex: 0 0 calc(50% - 10px);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.auction-item h3 {
+    margin-top: 0;
+}
+
+.auction-item .button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 3px;
+}
+
+.auction-item .button:hover {
+    background-color: #0056b3;
+}
+.sort-options select {
+    padding: 5px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s;
+}
+
+.sort-options select:hover {
+    border-color: #007bff;
+}

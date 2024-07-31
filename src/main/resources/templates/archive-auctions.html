@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Finished Auctions - Auction System</title>
+    <link rel="stylesheet" href="/common.css">
+    <link rel="stylesheet" href="/auction-list.css">
+</head>
+<body>
+<div th:replace="fragments.html :: logo"></div>
+<div th:replace="fragments.html :: menu"></div>
+
+<div class="container">
+    <h2>Finished Auctions</h2>
+    <div th:if="${#lists.isEmpty(auctions)}" class="no-auctions">
+        <p>No finished auctions found.</p>
+    </div>
+    <div th:if="${not #lists.isEmpty(auctions)}" class="auction-list">
+        <div th:each="auction : ${auctions}" class="auction-item">
+            <h3 th:text="${auction.title}">Auction Title</h3>
+            <p th:text="${auction.description}">Auction Description</p>
+            <p>Final Price: $<span th:text="${#numbers.formatDecimal(auction.getCurrentBid(), 1, 2)}">150.00</span></p>
+            <p>End Time: <span th:text="${#temporals.format(auction.endTime, 'yyyy-MM-dd HH:mm')}">2023-05-01 12:00</span></p>
+            <p>Category: <span th:text="${auction.category}">Category</span></p>
+            <a th:href="@{/auctions/{id}(id=${auction.id})}" class="button">View Details</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
